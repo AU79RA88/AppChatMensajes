@@ -7,10 +7,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import android.content.Intent;
 import java.util.HashMap;
 
 public class MainActivity3 extends AppCompatActivity {
@@ -66,6 +68,21 @@ public class MainActivity3 extends AppCompatActivity {
                         mensajesRef.child(mensajeId).setValue(msg);
                         Toast.makeText(this, "Usuario registrado", Toast.LENGTH_SHORT).show();
                     });
+        });
+
+
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
+
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_home) {
+                startActivity(new Intent(this, MainActivity.class));
+                return true;
+            }
+            if (item.getItemId() == R.id.nav_chat) {
+                startActivity(new Intent(this, MainActivity2.class));
+                return true;
+            }
+            return false;
         });
     }
 }

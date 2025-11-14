@@ -4,12 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.example.firebaseapp.adapter.MensajeAdapter;
 import com.example.firebaseapp.model.Mensaje;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.*;
 
 import java.util.ArrayList;
@@ -69,7 +71,23 @@ public class MainActivity2 extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) { }
+            public void onCancelled(DatabaseError error) {}
         });
+
+        // Bottom Navigation
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
+
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_home) {
+                startActivity(new Intent(this, MainActivity.class));
+                return true;
+            }
+            if (item.getItemId() == R.id.nav_registro) {
+                startActivity(new Intent(this, MainActivity3.class));
+                return true;
+            }
+            return false;
+        });
+
     }
 }

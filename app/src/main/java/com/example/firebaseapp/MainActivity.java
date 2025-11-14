@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.example.firebaseapp.adapter.UsuarioAdapter;
 import com.example.firebaseapp.model.Usuario;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.*;
 
 import java.util.ArrayList;
@@ -54,7 +55,23 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) { }
+            public void onCancelled(DatabaseError error) {}
+        });
+
+        // ---------------------------
+        // BOTTOM NAVIGATION AQUÍ
+        // ---------------------------
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
+
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_home) {
+                return true;
+            }
+            if (item.getItemId() == R.id.nav_registro) {
+                startActivity(new Intent(this, MainActivity3.class));
+                return true;
+            }
+            return false;
         });
     }
 
