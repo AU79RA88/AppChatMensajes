@@ -1,20 +1,20 @@
 package com.example.firebaseapp.model;
 
 public class Usuario {
-    private String id;
+    private String uid;
     private String nombre;
     private String correo;
 
-    public Usuario() { }
+    public Usuario() {}
 
-    public Usuario(String id, String nombre, String correo) {
-        this.id = id;
+    public Usuario(String uid, String nombre, String correo) {
+        this.uid = uid;
         this.nombre = nombre;
         this.correo = correo;
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public String getUid() { return uid; }
+    public void setUid(String uid) { this.uid = uid; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }

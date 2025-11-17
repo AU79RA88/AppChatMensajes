@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
         android:id="@+id/nav_home"
         android:title="Usuarios"
-        android:icon="@drawable/ic_home" />
-
+        android:icon="@android:drawable/ic_menu_view"/>
     <item
         android:id="@+id/nav_chat"
         android:title="Chat"
-        android:icon="@drawable/ic_chat" />
-
+        android:icon="@android:drawable/ic_dialog_email"/>
+    <item
+        android:id="@+id/nav_forum"
+        android:title="Foro"
+        android:icon="@android:drawable/ic_menu_edit"/>
     <item
         android:id="@+id/nav_registro"
         android:title="Registrar"
-        android:icon="@drawable/ic_add_user" />
-
+        android:icon="@android:drawable/ic_input_add"/>
 </menu>

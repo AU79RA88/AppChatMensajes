@@ -11,48 +11,41 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.firebaseapp.R;
 import com.example.firebaseapp.model.Usuario;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.ViewHolder> {
+public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioViewHolder> {
 
-    ArrayList<Usuario> lista;
-    OnUsuarioClickListener listener;
+    private final List<Usuario> lista;
+    private final OnUsuarioClickListener listener;
 
-    public interface OnUsuarioClickListener {
-        void onUsuarioClick(Usuario usuario);
-    }
+    public interface OnUsuarioClickListener { void onUsuarioClick(Usuario usuario); }
 
-    public UsuarioAdapter(ArrayList<Usuario> lista, OnUsuarioClickListener listener) {
+    public UsuarioAdapter(List<Usuario> lista, OnUsuarioClickListener listener) {
         this.lista = lista;
         this.listener = listener;
     }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_chat, parent, false);
-        return new ViewHolder(view);
+    @NonNull @Override
+    public UsuarioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_usuario, parent, false);
+        return new UsuarioViewHolder(v);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Usuario usuario = lista.get(position);
-        holder.nombre.setText(usuario.getNombre());
-        holder.itemView.setOnClickListener(v -> listener.onUsuarioClick(usuario));
+    @Override public void onBindViewHolder(@NonNull UsuarioViewHolder holder, int position) {
+        Usuario u = lista.get(position);
+        holder.nombre.setText(u.getNombre() != null ? u.getNombre() : "Desconocido");
+        holder.correo.setText(u.getCorreo() != null ? u.getCorreo() : "");
+        holder.itemView.setOnClickListener(v -> listener.onUsuarioClick(u));
     }
 
-    @Override
-    public int getItemCount() {
-        return lista.size();
-    }
+    @Override public int getItemCount() { return lista == null ? 0 : lista.size(); }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nombre;
-
-        public ViewHolder(@NonNull View itemView) {
+    static class UsuarioViewHolder extends RecyclerView.ViewHolder {
+        TextView nombre, correo;
+        UsuarioViewHolder(@NonNull View itemView) {
             super(itemView);
-            nombre = itemView.findViewById(R.id.txtNombreChat);
+            nombre = itemView.findViewById(R.id.txtNombreUsuario);
+            correo = itemView.findViewById(R.id.txtCorreoUsuario);
         }
     }
 }
