@@ -2,6 +2,7 @@ package com.example.firebaseapp;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -42,34 +43,49 @@ public class ChatActivity extends AppCompatActivity {
     private String convoId;
     private FirebaseUser currentUser;
 
-
-    private final Map<String,String> userNames = new HashMap<>();
+    private final Map<String, String> userNames = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+
         fm = FirebaseManager.get();
         currentUser = fm.getAuth().getCurrentUser();
+
         if (currentUser == null) {
-            Toast.makeText(this, "Usuario desconocido. Inicia sesión para chatear.", Toast.LENGTH_SHORT).show();
-            finish(); return;
+            Toast.makeText(this, "Debes iniciar sesión primero.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
 
         otherUid = getIntent().getStringExtra("otherUid");
-        if (otherUid == null || otherUid.isEmpty()) { finish(); return; }
+        if (TextUtils.isEmpty(otherUid)) {
+            Toast.makeText(this, "Error al abrir el chat.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
 
         convoId = Utils.getConversationId(currentUser.getUid(), otherUid);
-        messagesRef = fm.getRealtimeRef("conversations").child(convoId).child("messages");
+        messagesRef = fm.getRealtimeRef("conversations")
+                .child(convoId)
+                .child("messages");
+
 
         recyclerView = findViewById(R.id.chatRecyclerView);
         messageEditText = findViewById(R.id.messageEditText);
         progressBar = findViewById(R.id.chatProgressBar);
 
+        progressBar.setVisibility(View.GONE);
+
         adapter = new MensajeAdapter();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager lm = new LinearLayoutManager(this);
+        lm.setStackFromEnd(true);
+        recyclerView.setLayoutManager(lm);
         recyclerView.setAdapter(adapter);
+
 
         findViewById(R.id.sendButton).setOnClickListener(v -> sendMessage());
 
@@ -78,11 +94,18 @@ public class ChatActivity extends AppCompatActivity {
             @Override public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Usuario u = ds.getValue(Usuario.class);
-                    if (u != null && u.getUid() != null) userNames.put(u.getUid(), u.getNombre());
+                    if (u != null && u.getUid() != null) {
+                        userNames.put(u.getUid(), u.getNombre());
+                    }
                 }
             }
             @Override public void onCancelled(DatabaseError error) {}
         });
+
+
+        String otherName = getIntent().getStringExtra("otherName");
+        setTitle(TextUtils.isEmpty(otherName) ? "Chat" : otherName);
+
 
         startListen();
     }
@@ -93,47 +116,60 @@ public class ChatActivity extends AppCompatActivity {
 
         String uidFrom = currentUser.getUid();
         long ts = System.currentTimeMillis();
-        String nameFrom = userNames.containsKey(uidFrom) ? userNames.get(uidFrom) :
-                (currentUser.getDisplayName() == null ? "Desconocido" : currentUser.getDisplayName());
+
+        String nameFrom = userNames.get(uidFrom);
+        if (nameFrom == null) {
+            nameFrom = currentUser.getDisplayName();
+            if (nameFrom == null) nameFrom = "Usuario";
+        }
 
         Mensaje m = new Mensaje(uidFrom, nameFrom, texto, ts);
-        DatabaseReference newMsgRef = messagesRef.push();
-        newMsgRef.setValue(m)
-                .addOnSuccessListener(aVoid -> messageEditText.setText(""))
-                .addOnFailureListener(e -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+
+        messagesRef.push().setValue(m)
+                .addOnSuccessListener(a -> messageEditText.setText(""))
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error enviando mensaje: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void startListen() {
-        progressBar.setIndeterminate(true);
+        progressBar.setVisibility(View.VISIBLE);
+
         messageListener = new ChildEventListener() {
-            @Override public void onChildAdded(DataSnapshot snapshot, String prevChild) {
+            @Override public void onChildAdded(DataSnapshot snapshot, String previousKey) {
                 Mensaje m = snapshot.getValue(Mensaje.class);
                 if (m == null) return;
+
 
                 if (m.getDeName() == null && m.getDe() != null) {
                     String cached = userNames.get(m.getDe());
                     if (cached != null) m.setDeName(cached);
                 }
+
                 mensajes.add(m);
                 adapter.submitList(new ArrayList<>(mensajes));
                 recyclerView.scrollToPosition(mensajes.size() - 1);
-                progressBar.setIndeterminate(false);
+
+                progressBar.setVisibility(View.GONE);
             }
-            @Override public void onChildChanged(DataSnapshot snapshot, String prevChild) {}
+
+            @Override public void onChildChanged(DataSnapshot snapshot, String previousKey) {}
             @Override public void onChildRemoved(DataSnapshot snapshot) {}
-            @Override public void onChildMoved(DataSnapshot snapshot, String prevChild) {}
+            @Override public void onChildMoved(DataSnapshot snapshot, String previousKey) {}
+
             @Override public void onCancelled(DatabaseError error) {
-                progressBar.setIndeterminate(false);
-                Toast.makeText(ChatActivity.this, "Error BD: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(ChatActivity.this, "Error cargando mensajes: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
+
         messagesRef.addChildEventListener(messageListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (messageListener != null && messagesRef != null) messagesRef.removeEventListener(messageListener);
+        if (messageListener != null) {
+            messagesRef.removeEventListener(messageListener);
+        }
     }
 }
-

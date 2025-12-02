@@ -51,11 +51,13 @@ public class MensajeAdapter extends ListAdapter<Mensaje, MensajeAdapter.VH> {
         String myUid = user != null ? user.getUid() : null;
         boolean isMine = myUid != null && myUid.equals(m.getDe());
 
-        if (holder.bubbleParent.getLayoutParams() instanceof LinearLayout.LayoutParams) {
-            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) holder.bubbleParent.getLayoutParams();
+
+        View parent = holder.bubbleParent;
+        if (parent.getLayoutParams() instanceof LinearLayout.LayoutParams) {
+            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) parent.getLayoutParams();
             lp.gravity = isMine ? Gravity.END : Gravity.START;
-            holder.bubbleParent.setLayoutParams(lp);
-            holder.bubbleParent.setBackgroundResource(isMine ? R.drawable.bubble_sent : R.drawable.bubble_gray);
+            parent.setLayoutParams(lp);
+            parent.setBackgroundResource(isMine ? R.drawable.bubble_sent : R.drawable.bubble_gray);
         } else {
             holder.texto.setTextAlignment(isMine ? View.TEXT_ALIGNMENT_TEXT_END : View.TEXT_ALIGNMENT_TEXT_START);
         }

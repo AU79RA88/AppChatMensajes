@@ -13,6 +13,12 @@
         android:theme="@style/Theme.FirebaseApp"
         tools:targetApi="31">
         <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ForumActivity$LoginActivity"
+            android:exported="false" />
+        <activity
             android:name=".ForumActivity"
             android:exported="false" />
         <activity
@@ -27,9 +33,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:exported="true" />
         <activity
             android:name=".RegisterActivity"
             android:exported="true" />

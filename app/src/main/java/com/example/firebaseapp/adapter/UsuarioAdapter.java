@@ -33,19 +33,20 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
 
     @Override public void onBindViewHolder(@NonNull UsuarioViewHolder holder, int position) {
         Usuario u = lista.get(position);
-        holder.nombre.setText(u.getNombre() != null ? u.getNombre() : "Desconocido");
-        holder.correo.setText(u.getCorreo() != null ? u.getCorreo() : "");
-        holder.itemView.setOnClickListener(v -> listener.onUsuarioClick(u));
+        String nombre = u.getNombre() != null && !u.getNombre().isEmpty() ? u.getNombre() : "Desconocido";
+        holder.nombre.setText(nombre);
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onUsuarioClick(u);
+        });
     }
 
     @Override public int getItemCount() { return lista == null ? 0 : lista.size(); }
 
     static class UsuarioViewHolder extends RecyclerView.ViewHolder {
-        TextView nombre, correo;
+        TextView nombre;
         UsuarioViewHolder(@NonNull View itemView) {
             super(itemView);
             nombre = itemView.findViewById(R.id.txtNombreUsuario);
-            correo = itemView.findViewById(R.id.txtCorreoUsuario);
         }
     }
 }
