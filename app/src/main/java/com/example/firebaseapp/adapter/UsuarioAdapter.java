@@ -3,11 +3,12 @@ package com.example.firebaseapp.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.bumptech.glide.Glide;
 import com.example.firebaseapp.R;
 import com.example.firebaseapp.model.Usuario;
 
@@ -35,6 +36,13 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
         Usuario u = lista.get(position);
         String nombre = u.getNombre() != null && !u.getNombre().isEmpty() ? u.getNombre() : "Desconocido";
         holder.nombre.setText(nombre);
+
+        if (u.getFotoUrl() != null && !u.getFotoUrl().isEmpty()) {
+            Glide.with(holder.itemView.getContext()).load(u.getFotoUrl()).placeholder(R.drawable.default_user).into(holder.img);
+        } else {
+            holder.img.setImageResource(R.drawable.default_user);
+        }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onUsuarioClick(u);
         });
@@ -44,9 +52,11 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
 
     static class UsuarioViewHolder extends RecyclerView.ViewHolder {
         TextView nombre;
+        ImageView img;
         UsuarioViewHolder(@NonNull View itemView) {
             super(itemView);
             nombre = itemView.findViewById(R.id.txtNombreUsuario);
+            img = itemView.findViewById(R.id.imgUser);
         }
     }
 }

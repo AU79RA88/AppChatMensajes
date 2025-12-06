@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/txtNombreUsuario"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="10dp"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:textSize="16sp"/>
+    android:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@+id/imgUser"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/default_user"
+        android:scaleType="centerCrop"
+        android:layout_marginEnd="12dp"/>
+
+    <TextView
+        android:id="@+id/txtNombreUsuario"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="16sp"/>
+</LinearLayout>
